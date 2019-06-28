@@ -1,0 +1,185 @@
+
+CREATE SEQUENCE public.type_conversation_type_conversation_id_seq;
+
+CREATE TABLE public.type_conversation (
+                type_conversation_id INTEGER NOT NULL DEFAULT nextval('public.type_conversation_type_conversation_id_seq'),
+                type_conversation_description VARCHAR(20) NOT NULL,
+                CONSTRAINT type_conversation_pk PRIMARY KEY (type_conversation_id)
+);
+
+
+ALTER SEQUENCE public.type_conversation_type_conversation_id_seq OWNED BY public.type_conversation.type_conversation_id;
+
+CREATE SEQUENCE public.type_user_type_users_id_seq;
+
+CREATE TABLE public.type_user (
+                type_user_id INTEGER NOT NULL DEFAULT nextval('public.type_user_type_users_id_seq'),
+                type_user_description VARCHAR(20) NOT NULL,
+                CONSTRAINT type_user_pk PRIMARY KEY (type_user_id)
+);
+
+
+ALTER SEQUENCE public.type_user_type_users_id_seq OWNED BY public.type_user.type_user_id;
+
+CREATE SEQUENCE public.users_user_id_seq;
+
+CREATE TABLE public.users (
+                user_id INTEGER NOT NULL DEFAULT nextval('public.users_user_id_seq'),
+                user_phone VARCHAR(16) NOT NULL,
+                user_username VARCHAR(50) NOT NULL,
+                user_name VARCHAR(60) NOT NULL,
+                user_email VARCHAR(60) NOT NULL,
+                user_password VARCHAR(120) NOT NULL,
+                user_picture_url VARCHAR(80),
+                user_creation_time DATE DEFAULT now() NOT NULL,
+                CONSTRAINT users_pk PRIMARY KEY (user_id)
+);
+
+
+ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
+
+CREATE SEQUENCE public.status_status_id_seq;
+
+CREATE TABLE public.status (
+                status_id INTEGER NOT NULL DEFAULT nextval('public.status_status_id_seq'),
+                user_id INTEGER NOT NULL,
+                status_description VARCHAR(150) NOT NULL,
+                is_active BOOLEAN DEFAULT true NOT NULL,
+                CONSTRAINT status_id PRIMARY KEY (status_id)
+);
+
+
+ALTER SEQUENCE public.status_status_id_seq OWNED BY public.status.status_id;
+
+CREATE SEQUENCE public.conversation_conversation_id_seq;
+
+CREATE TABLE public.conversation (
+                conversation_id INTEGER NOT NULL DEFAULT nextval('public.conversation_conversation_id_seq'),
+                type_conversation_id INTEGER NOT NULL,
+                creator_id INTEGER,
+                conversation_name VARCHAR(25),
+                conversation_creation_date DATE NOT NULL DEFAULT NOW(),
+                CONSTRAINT conversation_pk PRIMARY KEY (conversation_id)
+);
+
+
+ALTER SEQUENCE public.conversation_conversation_id_seq OWNED BY public.conversation.conversation_id;
+
+CREATE SEQUENCE public.conversation_users_conversations_users_id_seq;
+
+CREATE TABLE public.conversation_users (
+                conversations_users_id INTEGER NOT NULL DEFAULT nextval('public.conversation_users_conversations_users_id_seq'),
+                user_id INTEGER NOT NULL,
+                type_user_id INTEGER NOT NULL,
+                conversation_id INTEGER NOT NULL,
+                deleted_at DATE,
+                CONSTRAINT conversation_users_pk PRIMARY KEY (conversations_users_id)
+);
+
+
+ALTER SEQUENCE public.conversation_users_conversations_users_id_seq OWNED BY public.conversation_users.conversations_users_id;
+
+CREATE SEQUENCE public.message_message_id_seq;
+
+CREATE TABLE public.message (
+                message_id INTEGER NOT NULL DEFAULT nextval('public.message_message_id_seq'),
+                user_id INTEGER NOT NULL,
+                conversation_id INTEGER NOT NULL,
+                message_attachment VARCHAR,
+                message_body VARCHAR,
+                message_creation_time DATE NOT NULL,
+                CONSTRAINT message_id PRIMARY KEY (message_id)
+);
+
+
+ALTER SEQUENCE public.message_message_id_seq OWNED BY public.message.message_id;
+
+CREATE SEQUENCE public.block_list_block_list_id_seq;
+
+CREATE TABLE public.block_list (
+                block_list_id INTEGER NOT NULL DEFAULT nextval('public.block_list_block_list_id_seq'),
+                blocker_id INTEGER NOT NULL,
+                blocked_id INTEGER NOT NULL,
+                block_date DATE NOT NULL DEFAULT NOW(),
+                CONSTRAINT block_list_pk PRIMARY KEY (block_list_id)
+);
+
+
+ALTER SEQUENCE public.block_list_block_list_id_seq OWNED BY public.block_list.block_list_id;
+
+ALTER TABLE public.conversation ADD CONSTRAINT type_conversation_conversations_fk
+FOREIGN KEY (type_conversation_id)
+REFERENCES public.type_conversation (type_conversation_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.conversation_users ADD CONSTRAINT type_user_conversations_users_fk
+FOREIGN KEY (type_user_id)
+REFERENCES public.type_user (type_user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.block_list ADD CONSTRAINT users_block_list_fk
+FOREIGN KEY (logged_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.block_list ADD CONSTRAINT users_block_list_fk1
+FOREIGN KEY (blocked_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.message ADD CONSTRAINT users_message_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.conversation_users ADD CONSTRAINT users_conversations_users_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.conversation ADD CONSTRAINT users_conversations_fk
+FOREIGN KEY (creator_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.status ADD CONSTRAINT users_users_status_fk
+FOREIGN KEY (user_id)
+REFERENCES public.users (user_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.conversation_users ADD CONSTRAINT conversations_conversations_users_fk
+FOREIGN KEY (conversation_id)
+REFERENCES public.conversation (conversation_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.message ADD CONSTRAINT conversations_message_fk
+FOREIGN KEY (conversation_id)
+REFERENCES public.conversation (conversation_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+INSERT INTO type_conversation (type_conversation_description) VALUES ('chat');
+INSERT INTO type_conversation (type_conversation_description) VALUES ('group');
+INSERT INTO type_conversation (type_conversation_description) VALUES ('canal');
+
+INSERT INTO type_user(type_user_description) VALUES ('user');
+INSERT INTO type_user(type_user_description) VALUES ('admin');
