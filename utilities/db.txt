@@ -65,19 +65,18 @@ CREATE TABLE public.conversation (
 
 ALTER SEQUENCE public.conversation_conversation_id_seq OWNED BY public.conversation.conversation_id;
 
-CREATE SEQUENCE public.conversation_users_conversations_users_id_seq;
+CREATE SEQUENCE public.conversation_users_conversation_user_id_seq;
 
 CREATE TABLE public.conversation_users (
-                conversations_users_id INTEGER NOT NULL DEFAULT nextval('public.conversation_users_conversations_users_id_seq'),
+                conversation_user_id INTEGER NOT NULL DEFAULT nextval('public.conversation_users_conversation_user_id_seq'),
                 user_id INTEGER NOT NULL,
                 type_user_id INTEGER NOT NULL,
                 conversation_id INTEGER NOT NULL,
-                deleted_at DATE,
-                CONSTRAINT conversation_users_pk PRIMARY KEY (conversations_users_id)
+                CONSTRAINT conversation_users_pk PRIMARY KEY (conversation_user_id)
 );
 
 
-ALTER SEQUENCE public.conversation_users_conversations_users_id_seq OWNED BY public.conversation_users.conversations_users_id;
+ALTER SEQUENCE public.conversation_users_conversation_user_id_seq OWNED BY public.conversation_users.conversation_user_id;
 
 CREATE SEQUENCE public.message_message_id_seq;
 
@@ -87,7 +86,7 @@ CREATE TABLE public.message (
                 conversation_id INTEGER NOT NULL,
                 message_attachment VARCHAR,
                 message_body VARCHAR,
-                message_creation_time DATE NOT NULL,
+                message_creation_date DATE NOT NULL DEFAULT now(),
                 CONSTRAINT message_id PRIMARY KEY (message_id)
 );
 
