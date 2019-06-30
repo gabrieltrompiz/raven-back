@@ -1,16 +1,14 @@
-const express = require('express');
-const app = express();
+const app = require('express')();
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
 
-app.use(express.json());
-app.use(express.urlencoded());
+app.get('/', (req, res) => {
+  res.sendStatus(200)
+})
 
-app.use('/', (req, res) => {
-	res.send({
-		status: 200,
-		message: 'Express Boilerplate'
-	})
-});
+require('./sockets/auth')(io)
+require('./sockets/chat')(io)
 
-app.listen(8080, () => {
-	console.log('Listening on port 8080');
-});
+http.listen(8080, () => {
+  console.log('Listening on port 8080')
+})
