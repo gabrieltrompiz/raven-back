@@ -1,11 +1,11 @@
 module.exports = {
-    dbUrl: 'postgres://postgres:mastersword@localhost5432/raven',
+    dbUrl: 'postgres://postgres:mastersword@localhost:5432/raven',
     port: 8080,
 
     //User Queries
-    registerUser: 'INSERT INTO users (user_phone, user_name, user_email, user_picture_url, user_password) VALUES ($1, $2, $3, $4, $5);' +
-            'INSERT INTO status (user_id, status_description) VALUES (currval(\'users_user_id_seq\'), \'Available\');',
-    login: 'SELECT user_id, user_phone, user_name, user_email, user_picture_url FROM users WHERE user_email = $1 AND user_password = $2',
+    registerUser: 'INSERT INTO users (user_phone, user_name, user_email, user_picture_url, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+    initializeStatus: 'INSERT INTO status (user_id, status_description) VALUES (currval(\'users_user_id_seq\'), \'Available\');',
+    login: 'SELECT * FROM users WHERE user_email = $1 AND user_password = $2',
     getUserById: 'SELECT user_id, user_phone, user_name, user_email, user_picture_url FROM users WHERE user_id = $1;',
     getUserByPhone: 'SELECT user_id, user_phone, user_name, user_email, user_picture_url FROM users WHERE user_phone = $1;',
     getUserByEmail: 'SELECT * FROM users WHERE user_email = $1;',

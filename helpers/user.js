@@ -5,16 +5,34 @@ const properties = require('../utilities/properties');
 module.exports.getUserByEmail = email => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.one(properties.getUserByEmail, [email]).then(user => {
+            obj.oneOrNone(properties.getUserByEmail, [email]).then(user => {
                 res(user);
                 obj.done();
-            });
+            }).catch(err => {
+                rej(err);
+            })
         }).catch(err => {
             console.log(err);
             rej(err);
         });
     });
 };
+
+module.exports.getUserByPhone = phone => {
+    return new Promise((res, rej) => {
+        db.connect().then(obj => {
+            obj.oneOrNone(properties.getUserByPhone, [phone]).then(user => {
+                res(user);
+                obj.done();
+            }).catch(err => {
+                rej(err);
+            })
+        }).catch(err => {
+            console.log(err);
+            rej(err);
+        });
+    });
+}
 
 module.exports.register = user => {
     return new Promise((res, rej) => {
@@ -33,7 +51,7 @@ module.exports.register = user => {
 module.exports.login = (email, password) => {
     return new Promise((res, rej) => {
         db.connect().then(obj => {
-            obj.one(properties.login, [email, password]).then(user => {
+            obj.oneOrNone(properties.login, [email, password]).then(user => {
                 res(user);
                 obj.done();
             });
@@ -44,11 +62,11 @@ module.exports.login = (email, password) => {
     });
 };
 
-module.export.encrypt = password => {
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(password, salt, (err, hash) => {
-            password = hash;
-        });
-    });
-    return password;
+module.exports.comparePassword = (candidate, hash) => {
+    return new Promise((res, rej) => {
+        bcrypt.compare(candidate, hash, (err, isMatch) => {
+            if(err) rej(err);
+            res(isMatch);
+        })
+    })
 }

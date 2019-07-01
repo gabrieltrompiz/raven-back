@@ -1,6 +1,7 @@
 let express = require('express');
 let router = express.Router();
-let token = require('../utilities/tokens');
+
+router.use('/session', require('./auth'));
 
 router.get('/', (req, res) => {
     res.status(200).send({
@@ -8,13 +9,5 @@ router.get('/', (req, res) => {
         message: 'ok'
     });
 });
-
-router.get('/logout', (req, res) => {
-    token.revokeToken(req.body.token);
-    res.status(200).send({
-        status: 200,
-        message: 'Logout'
-    })    
-})
 
 module.exports = router;
