@@ -45,7 +45,10 @@ module.exports.register = user => {
             console.log(err);
             rej(err);
         });
-    });
+    }).catch(err => {
+        console.log(err);
+        rej(err);
+    })
 };
 
 module.exports.login = (email, password) => {

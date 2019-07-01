@@ -1,5 +1,5 @@
 const properties = require('../utilities/properties');
-const usersHelper = require('../helpers/user');
+const user = require('../helpers/user');
 
 module.exports.isAuth = (req, res, next) => {
     if (req.isAuthenticated()) {
@@ -21,4 +21,24 @@ module.exports.isLogged = (req, res, next) => {
     } else {
         next();
     }
+};
+
+//Verifies that the sent email is not registered in db
+module.exports.emailRegistered = (req, res, next) => {
+    let email = req.body.email;
+    user.getUserByEmail(email).then(user => {
+        if(user === null)
+            next();
+        else {
+            res.status(403).send({
+                status: 403,
+                message: 'Email already registered'
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            status: 500,
+            message: 'Internal server error'
+        });
+    });
 };

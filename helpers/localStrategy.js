@@ -3,10 +3,10 @@ let LocalStrategy = require('passport-local').Strategy;
 
 module.exports = new LocalStrategy( {usernameField: 'email', passwordField: 'password'}, (email, password, done) => {
      userHelper.getUserByEmail(email).then(user => {
-        if (user.error) {
+        if (user === null) {
             return done(null, false);
         }
-        
+
         userHelper.comparePassword(password, user.user_password).then(isMatch => {
              if(isMatch) {
                  return done(null, {

@@ -3,15 +3,13 @@ module.exports = {
     port: 8080,
 
     //User Queries
-    registerUser: 'INSERT INTO users (user_phone, user_name, user_email, user_picture_url, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+    registerUser: 'INSERT INTO users (user_name, user_email, user_picture_url, user_password) VALUES ($1, $2, $3, $4) RETURNING *;',
     initializeStatus: 'INSERT INTO status (user_id, status_description) VALUES (currval(\'users_user_id_seq\'), \'Available\');',
     login: 'SELECT * FROM users WHERE user_email = $1 AND user_password = $2',
-    getUserById: 'SELECT user_id, user_phone, user_name, user_email, user_picture_url FROM users WHERE user_id = $1;',
-    getUserByPhone: 'SELECT user_id, user_phone, user_name, user_email, user_picture_url FROM users WHERE user_phone = $1;',
+    getUserById: 'SELECT user_id, user_name, user_email, user_picture_url FROM users WHERE user_id = $1;',
     getUserByEmail: 'SELECT * FROM users WHERE user_email = $1;',
     updateName: 'UPDATE users SET user_name = $1 WHERE user_id = $2;',
     updatePassword: 'UPDATE users SET user_password = $1 WHERE user_id = $2;',
-    updatePhone: 'UPDATE users SET user_phone = $1 WHERE user_id = $2;',
     updatePicture: 'UPDATE users SET user_picture_url = $1 WHERE user_id = $2;',
     deleteUser: 'DELETE FROM users WHERE user_id = $1;',
 
@@ -43,5 +41,10 @@ module.exports = {
     getMessageList: 'SELECT message_id, user_id, message_attachment, message_body, message_creation_date FROM message WHERE conversation_id = $1;',
     searchMessages: 'SELECT message_id, user_id, message_attachment, message_body, message_creation_date ' +
         'FROM message WHERE conversation_id = $1 AND message_body ILIKE \'%\'$2\'%\';',
-    deleteMessage: 'DELETE FROM messages WHERE message_id = $1;'
+    deleteMessage: 'DELETE FROM messages WHERE message_id = $1;',
+
+    //App mailer
+    emailName: 'Raven Support',
+    emailUser: 'siulptt@gmail.com',
+    emailPass: 'eresbella123'
 };

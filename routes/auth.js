@@ -1,23 +1,40 @@
 let express = require('express');
 let router = express.Router();
+
 const passport = require('passport');
 const auth = require('../middlewares/isAuth');
 const userHelper = require('../helpers/user');
 const bcrypt = require('bcryptjs');
+const codeManager = require('../helpers/codeManager');
+const properties = require('../utilities/properties');
+
+const transporter = require('nodemailer').createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+      user: properties.emailUser,
+      pass: properties.emailPass
+  }
+});
 
 router.get('/email', auth.isLogged, (req, res) => { 
     userHelper.getUserByEmail(req.query.email).then(user => {
-      res.status(202).send({
-        status: 202,
-        message: 'Email found'
-      });
-      console.log('XD');
-
-      }).catch(err => {
-        console.log('XD2');
+      if(user !== null) {
+        res.status(202).send({
+          status: 202,
+          message: 'Email found'
+        });
+      } else {
+        res.status(200).send({
+          status: 202,
+          message: 'Email not found'
+        });
+      }
+    }).catch(err => {
         res.status(500).send({
             status: 200,
-            message: 'User does not exists'
+            message: 'Internal Server Error'
         });
       });
 });
@@ -35,9 +52,8 @@ router.get('/logout', auth.isAuth, (req, res) => {
     res.status(200).send({ status: 200, message: "Logged out successfully" });
 });
 
-router.post('/register', auth.isLogged, /*user.emailExists, user.phoneExists*/ (req, res) => {
+router.post('/register', auth.isLogged, auth.emailRegistered, (req, res) => {
     let user = req.body;
-    console.log(user);
     var salt = bcrypt.genSaltSync(10);
     user.password = bcrypt.hashSync(user.password, salt);
     
@@ -48,7 +64,6 @@ router.post('/register', auth.isLogged, /*user.emailExists, user.phoneExists*/ (
         message: 'User registered succesfully',
         data: {
           id: data.user_id,
-          phone: data.user_phone,
           name: data.user_name,
           email: data.user_email,
           pictureUrl: data.user_picture_url,
@@ -64,21 +79,45 @@ router.post('/register', auth.isLogged, /*user.emailExists, user.phoneExists*/ (
 });
 
 router.get('/sendCode', (req, res) => {
-
+  let email = req.query.email;
+  let name = req.query.name;
+  let code = codeManager.generateCode(email);
+  let info = transporter.sendMail({
+    from: properties.emailUser,
+    to: email,
+    subject: 'Verify your email account',
+    text: 'Hello, ' + name + ', here\'s your verification code: ' + code,
+    html: '<p><h1>Hello, ' + name + '. </h1><h4>Here\'s your verification code: <b>' + code +'</b></h4></p>'
+  }).then(data => {
+    res.status(200).send({
+      status: 200,
+      message: 'Mail Sended',
+      data: data
+    });
+  }).catch(err => {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: 'Couldn\'t send Mail'
+    });
+  })
 })
 
 router.get('/checkCode', (req, res) => {
-    if(req.body.code === 000001) {
-        res.status(202).send({
-            status: 202,
-            message: 'Code Matched',
-        });
-    } else {
-        res.status(406).send({
-            status: 406,
-            message: 'Code doesn\'n match'
-        });
-    }
+  let code = req.query.code;
+  let email = req.query.email;
+  if(codeManager.accept(email, code)) {
+    res.status(200).send({
+      status: 200,
+      message: 'Code Matched'
+    });
+  }
+  else {
+    res.status(401).send({
+      status: 401,
+      message: 'Code doesn\'t match' 
+    })
+  }
 });
 
 module.exports = router;
