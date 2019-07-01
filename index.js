@@ -7,8 +7,8 @@ const io = require('socket.io')(http);
 
 let session = require('express-session');
 let passport = require('passport');
+let cors = require('cors');
 
-// require('./sockets/auth')(io);
 require('./sockets/chat')(io);
 
 app.use(express.json());
@@ -18,6 +18,13 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
+
+app.use(cors({
+	origin: '*',
+	methods: 'POST, PUT, GET, DELETE, OPTIONS',
+	allowedHeaders: 'Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization',
+	credentials: true
+}))
 
 app.use(passport.initialize());
 app.use(passport.session());
