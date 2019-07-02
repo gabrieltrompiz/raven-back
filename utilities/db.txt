@@ -25,11 +25,10 @@ CREATE SEQUENCE public.users_user_id_seq;
 
 CREATE TABLE public.users (
                 user_id INTEGER NOT NULL DEFAULT nextval('public.users_user_id_seq'),
-                user_username VARCHAR(50) NOT NULL,
                 user_name VARCHAR(60) NOT NULL,
                 user_email VARCHAR(60) NOT NULL,
-                user_password VARCHAR(120) NOT NULL,
-                user_picture_url VARCHAR(80),
+                user_password VARCHAR(128) NOT NULL,
+                user_picture_url VARCHAR(128),
                 user_creation_time DATE DEFAULT now() NOT NULL,
                 CONSTRAINT users_pk PRIMARY KEY (user_id)
 );
@@ -55,27 +54,27 @@ CREATE SEQUENCE public.conversation_conversation_id_seq;
 CREATE TABLE public.conversation (
                 conversation_id INTEGER NOT NULL DEFAULT nextval('public.conversation_conversation_id_seq'),
                 type_conversation_id INTEGER NOT NULL,
-                creator_id INTEGER,
-                conversation_name VARCHAR(25),
-                conversation_creation_date DATE NOT NULL DEFAULT NOW(),
+                creator_id INTEGER NOT NULL,
+                conversation_name VARCHAR(35),
+                conversation_creation_date TIMESTAMP NOT NULL,
                 CONSTRAINT conversation_pk PRIMARY KEY (conversation_id)
 );
 
 
 ALTER SEQUENCE public.conversation_conversation_id_seq OWNED BY public.conversation.conversation_id;
 
-CREATE SEQUENCE public.conversation_users_conversation_user_id_seq;
+CREATE SEQUENCE public.conversation_users_conversations_users_id_seq;
 
 CREATE TABLE public.conversation_users (
-                conversation_user_id INTEGER NOT NULL DEFAULT nextval('public.conversation_users_conversation_user_id_seq'),
+                conversations_users_id INTEGER NOT NULL DEFAULT nextval('public.conversation_users_conversations_users_id_seq'),
                 user_id INTEGER NOT NULL,
                 type_user_id INTEGER NOT NULL,
                 conversation_id INTEGER NOT NULL,
-                CONSTRAINT conversation_users_pk PRIMARY KEY (conversation_user_id)
+                CONSTRAINT conversation_users_pk PRIMARY KEY (conversations_users_id)
 );
 
 
-ALTER SEQUENCE public.conversation_users_conversation_user_id_seq OWNED BY public.conversation_users.conversation_user_id;
+ALTER SEQUENCE public.conversation_users_conversations_users_id_seq OWNED BY public.conversation_users.conversations_users_id;
 
 CREATE SEQUENCE public.message_message_id_seq;
 
@@ -85,7 +84,7 @@ CREATE TABLE public.message (
                 conversation_id INTEGER NOT NULL,
                 message_attachment VARCHAR,
                 message_body VARCHAR,
-                message_creation_date DATE NOT NULL DEFAULT now(),
+                message_creation_date TIMESTAMP NOT NULL,
                 CONSTRAINT message_id PRIMARY KEY (message_id)
 );
 
@@ -98,7 +97,7 @@ CREATE TABLE public.block_list (
                 block_list_id INTEGER NOT NULL DEFAULT nextval('public.block_list_block_list_id_seq'),
                 blocker_id INTEGER NOT NULL,
                 blocked_id INTEGER NOT NULL,
-                block_date DATE NOT NULL DEFAULT NOW(),
+                block_date TIMESTAMP NOT NULL,
                 CONSTRAINT block_list_pk PRIMARY KEY (block_list_id)
 );
 
@@ -120,7 +119,7 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 ALTER TABLE public.block_list ADD CONSTRAINT users_block_list_fk
-FOREIGN KEY (logged_id)
+FOREIGN KEY (blocker_id)
 REFERENCES public.users (user_id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
