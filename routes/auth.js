@@ -68,6 +68,7 @@ router.post('/register', auth.isLogged, auth.emailRegistered, (req, res) => {
       message: 'User registered succesfully',
       data: {
         id: data.user_id,
+        username: user_username,
         name: data.user_name,
         email: data.user_email,
         pictureUrl: data.user_picture_url,

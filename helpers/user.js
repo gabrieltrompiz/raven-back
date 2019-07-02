@@ -39,7 +39,7 @@ module.exports.getUserByPhone = phone => {
 module.exports.register = user => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.one(properties.registerUser, [user.name, user.email, '../assets/default.jpg', user.password]).then(user => {
+      obj.one(properties.registerUser, [user.username, user.name, user.email, '../assets/default.jpg', user.password]).then(user => {
         res(user);
         obj.done();
       });

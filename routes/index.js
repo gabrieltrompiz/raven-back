@@ -11,3 +11,13 @@ router.get('/', (req, res) => {
 });
 
 module.exports = router;
+
+/**
+ * 
+ * TODO:
+ *  Chats CRUD (not modify)
+ *  Single Chat Messages CRUD (not modify)
+ *  Search Users
+ *  Create rooms with chats (and initialize them when server starts running)
+ * 
+ */

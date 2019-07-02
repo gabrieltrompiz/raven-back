@@ -3,17 +3,19 @@ module.exports = {
     port: 8080,
 
     //User Queries
-    registerUser: 'INSERT INTO users (user_name, user_email, user_picture_url, user_password) VALUES ($1, $2, $3, $4) RETURNING *;',
-    initializeStatus: 'INSERT INTO status (user_id, status_description) VALUES (currval(\'users_user_id_seq\'), \'Available\');',
+    registerUser: 'INSERT INTO users (user_username, user_name, user_email, user_picture_url, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
     login: 'SELECT * FROM users WHERE user_email = $1 AND user_password = $2',
     getUserById: 'SELECT user_id, user_name, user_email, user_picture_url FROM users WHERE user_id = $1;',
     getUserByEmail: 'SELECT * FROM users WHERE user_email = $1;',
-    updateName: 'UPDATE users SET user_name = $1 WHERE user_id = $2;',
+    updateUser: 'UPDATE users SET user_name = $1, user_username = $2 WHERE user_id = $3;',
     updatePassword: 'UPDATE users SET user_password = $1 WHERE user_id = $2;',
     updatePicture: 'UPDATE users SET user_picture_url = $1 WHERE user_id = $2;',
     deleteUser: 'DELETE FROM users WHERE user_id = $1;',
+    searchUser: 'SELECT * FROM users WHERE user_username ILIKE $1', //Search users with a given username using 'ILIKE'
 
     //Status Queries
+    initializeStatus: 'INSERT INTO status (user_id, status_description) VALUES (currval(\'users_user_id_seq\'), \'Available\');', //Query to be called when an user
+                                                                                                                                  //is created
     getStatusList: 'SELECT status_id, status_description, is_active FROM status WHERE user_id = $1;',
     uploadStatus: 'UPDATE status SET is_active = FALSE WHERE status_id = $1;' +
         'INSERT INTO status (user_id, status_description) VALUES ($2, \'$3\');',
