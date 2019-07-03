@@ -20,10 +20,10 @@ module.exports.getUserByEmail = email => {
   });
 };
 
-module.exports.getUserByPhone = phone => {
+module.exports.getUserByUsername = username => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.oneOrNone(properties.getUserByPhone, [phone]).then(user => {
+      obj.oneOrNone(properties.getUserByUsername, [username]).then(user => {
         res(user);
         obj.done();
       }).catch(err => {

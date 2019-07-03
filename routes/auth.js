@@ -18,25 +18,11 @@ const transporter = require('nodemailer').createTransport({
   }
 });
 
-router.get('/email', auth.isLogged, (req, res) => { 
-  userHelper.getUserByEmail(req.query.email).then(user => {
-    if(user) {
-      res.status(202).send({
-        status: 202,
-        message: 'Email found'
-      });
-    } else {
-      res.status(200).send({
-        status: 202,
-        message: 'Email not found'
-      });
-    }
-  }).catch(err => {
-    res.status(500).send({
-      status: 200,
-      message: 'Internal Server Error'
-    });
-  });
+router.get('/check', auth.isLogged, auth.emailRegistered, auth.usernameRegistered, (req, res) => { 
+  res.status(200).send({
+    status: 200,
+    message: 'Ok'
+  })
 });
 
 router.post('/login', auth.isLogged, passport.authenticate('local'), (req, res) => {

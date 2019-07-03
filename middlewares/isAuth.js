@@ -25,7 +25,7 @@ module.exports.isLogged = (req, res, next) => {
 
 //Verifies that the sent email is not registered in db
 module.exports.emailRegistered = (req, res, next) => {
-  const email = req.body.email;
+  const email = req.query.email;
   user.getUserByEmail(email).then(user => {
     if(user === null)
       next();
@@ -42,3 +42,18 @@ module.exports.emailRegistered = (req, res, next) => {
     });
   });
 };
+
+module.exports.usernameRegistered = (req, res, next) => {
+  const username = req.query.username;
+  
+  user.getUserByUsername(username).then(user => {
+    if(user === null) {
+      next();
+    } else {
+      res.status(403).send({
+        status: 403,
+        message: 'Username already in use'
+      });
+    }
+  });
+}
