@@ -18,12 +18,19 @@ const transporter = require('nodemailer').createTransport({
   }
 });
 
-router.get('/check', auth.isLogged, auth.emailRegistered, auth.usernameRegistered, (req, res) => { 
+router.get('/checkUser', auth.isLogged, auth.usernameRegistered, (req, res) => { 
   res.status(200).send({
     status: 200,
     message: 'Ok'
   })
 });
+
+router.get('/checkEmail', auth.isLogged, auth.emailRegistered, (req, res) => {
+  res.status(200).send({
+    status: 200,
+    message: 'Ok'
+  })
+})
 
 router.post('/login', auth.isLogged, passport.authenticate('local'), (req, res) => {
   res.status(200).send({
