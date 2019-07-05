@@ -19,7 +19,7 @@ module.exports = {
                                                                                                                                   //is created
     getStatusList: 'SELECT status_id, status_description, is_active FROM status WHERE user_id = $1;',
     uploadStatus: 'UPDATE status SET is_active = FALSE WHERE status_id = $1;' +
-        'INSERT INTO status (user_id, status_description) VALUES ($2, \'$3\');',
+        'INSERT INTO status (user_id, status_description) VALUES ($2, \'$3\') RETURNING *;',
     updateStatus: 'UPDATE status SET is_active = FALSE WHERE status_id = $1;' +
         'UPDATE status SET is_active = TRUE WHERE status_id = $2;',
     deleteStatus: 'DO $do$ BEGIN IF EXISTS (SELECT * FROM status WHERE status_id = $1 AND is_active = FALSE);' +

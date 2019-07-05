@@ -3,7 +3,7 @@ const properties = require('../utilities/properties');
 module.exports.getChats = userId => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.many(properties.getConversationList, [userId]).then(chats => {
+      obj.manyOrNone(properties.getConversationList, [userId]).then(chats => {
         res(chats);
         obj.done();
       });
@@ -97,6 +97,49 @@ module.exports.leaveGroup = (userId) => {
     });
   });
 };
+
+module.exports.getMessages = chatId => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.manyOrNone(properties.getMessageList, [chatId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
+module.exports.insertMessage = (userId, chatId, attachment, body) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.one(properties.insertMessage, [userId, chatId, attachment, body]).then(message => {
+        res(message);
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
+module.exports.deleteMessage = (messageId) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.deleteMessage, [messageId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
 
 module.exports.blockUser = (blockerId, blockedId) => {
   return new Promise((res, rej) => {

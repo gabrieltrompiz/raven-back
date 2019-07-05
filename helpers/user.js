@@ -90,11 +90,11 @@ module.exports.getStatusList = userId => {
   });
 };
 
-module.exports.uploadStatus = (statusId, userId, statusDescription) => {
+module.exports.uploadStatus = (oldStatusId, userId, statusDescription) => {    //CHECH IF THIS QUERY WORKS
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.none(properties.uploadStatus, [statusId, userId, statusDescription]).then(() => {
-        res();
+      obj.one(properties.uploadStatus, [statusId, userId, statusDescription]).then(status => {
+        res(status);
         obj.done();
       });
     }).catch(err => {
