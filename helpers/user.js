@@ -90,10 +90,24 @@ module.exports.getStatusList = userId => {
   });
 };
 
-module.exports.uploadStatus = (oldStatusId, userId, statusDescription) => {    //CHECH IF THIS QUERY WORKS
+module.exports.getStatusById = statusId => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.one(properties.uploadStatus, [statusId, userId, statusDescription]).then(status => {
+      obj.many(properties.getStatusById, [statusId]).then(status => {
+        res(status);
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
+module.exports.uploadStatus = (oldStatusId, userId, statusDescription) => {    //CHECK IF THIS QUERY WORKS
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.one(properties.uploadStatus, [oldStatusId, userId, statusDescription]).then(status => {
         res(status);
         obj.done();
       });

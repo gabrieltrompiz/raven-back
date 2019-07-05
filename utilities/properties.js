@@ -18,6 +18,7 @@ module.exports = {
     initializeStatus: 'INSERT INTO status (user_id, status_description) VALUES (currval(\'users_user_id_seq\'), \'Available\');', //Query to be called when an user
                                                                                                                                   //is created
     getStatusList: 'SELECT status_id, status_description, is_active FROM status WHERE user_id = $1;',
+    getStatusById: 'SELECT * FROM status WHERE status_id = $1',
     uploadStatus: 'UPDATE status SET is_active = FALSE WHERE status_id = $1;' +
         'INSERT INTO status (user_id, status_description) VALUES ($2, \'$3\') RETURNING *;',
     updateStatus: 'UPDATE status SET is_active = FALSE WHERE status_id = $1;' +
@@ -29,9 +30,11 @@ module.exports = {
     createConversation: 'INSERT INTO conversation (type_conversation_id, creator_id, conversation_name) VALUES ($1, $2, $3) RETURNING *;',
     insertUserToConversation: 'INSERT INTO conversation_users (user_id, type_user_id, conversation_id) VALUES ($1, $2, $3) RETURNING *;',
     removeUserFromConversation: 'DELETE FROM conversation_users WHERE conversation_user_id = $1;',
-    getConversationUsers: '',  /* TODO: this query lol*/
+    getConversationUsers: 'SELECT * FROM conversation_users WHERE conversation_id = $1',
     getConversationList: 'SELECT cu.type_user_id, co.* FROM conversation_users cu INNER JOIN conversation co ' +
         'ON cu.conversation_id = co.conversation_id WHERE cu.user_id = $1;',
+    getConversationById: 'SELECT * FROM conversation WHERE conversation_id = $1',
+    getUserFromConversation: 'SELECT * FROM conversation_users WHERE conversation_id = $1 AND user_id = $2',
     searchConversation: 'SELECT cu.type_user_id, co.* FROM conversation_users cu INNER JOIN conversation co ' +
         'ON cu.conversation_id = co.conversation_id WHERE cu.user_id = $1 AND co.conversation_name ILIKE $2;',
     updateConversationName: 'UPDATE conversation SET conversation_name = $1 WHERE conversation_id = $2;',

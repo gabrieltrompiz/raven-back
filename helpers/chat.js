@@ -14,6 +14,34 @@ module.exports.getChats = userId => {
   });
 };
 
+module.exports.getChatById = chatId => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.one(properties.getConversationById, [chatId]).then(chat => {
+        res(chat);
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
+module.exports.isUserParticipant = (userId, chatId) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.one(properties.getUserFromConversation, [userId, chatId]).then(user => {
+        res(user);
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
 module.exports.createChat = (typeChat, creatorId, chatName) => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {

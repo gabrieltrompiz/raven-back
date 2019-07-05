@@ -1,8 +1,10 @@
 const express = require('express');
+const auth = require('../middlewares/isAuth');
+const isUser = require('../middlewares/isUser');
 const user = require('../helpers/user');
 const router = express.Router();
 
-router.get('/status', (req, res) => {
+router.get('/status', auth.isAuth, (req, res) => {
   user.getStatusList(req.user.id).then(statusList => {
     res.status(200).send({
       status: 200,
@@ -18,7 +20,7 @@ router.get('/status', (req, res) => {
   });
 });
 
-router.post('/status', (req, res) => {
+router.post('/status', auth.isAuth, (req, res) => {
   user.uploadStatus(req.body.oldStatusId, req.user.id, req.body.statusDescription).then(status => {
     res.status(200).send({
       status: 200,
@@ -34,7 +36,7 @@ router.post('/status', (req, res) => {
   });
 });
 
-router.put('/status', (req, res) => {
+router.put('/status', auth.isAuth, isUser.isStatusOwner, (req, res) => {
   user.updateStatus(req.body.oldStatusId, req.body.newStatusId).then(() => {
     res.status(200).send({
       status: 200,
@@ -49,7 +51,7 @@ router.put('/status', (req, res) => {
   });
 });
 
-router.delete('/status', (req, res) => {
+router.delete('/status', auth.isAuth, isUser.isStatusOwner, (req, res) => {
   user.deleteStatus(req.body.statusId).then(() => {
     res.status(200).send({
       status: 200,

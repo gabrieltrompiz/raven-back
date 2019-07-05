@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('isAuth');
 const chat = require('../helpers/chat');
+const isUser = require('../middlewares/isUser')
 const router = express.Router();
 
 router.get('/chats', auth.isAuth, (req, res) => {
@@ -19,7 +20,7 @@ router.get('/chats', auth.isAuth, (req, res) => {
   });
 });
 
-router.post('/chats', (req, res) => {
+router.post('/chats', auth.isAuth, (req, res) => {
   chat.createChat(req.body.typeChat, req.user.id, req.body.chatName).then(chat => {
     res.status(200).send({
       status: 200,
@@ -35,7 +36,7 @@ router.post('/chats', (req, res) => {
   });
 });
 
-router.delete('/chats', (req, res) => {
+router.delete('/chats', auth.isAuth, isUser.isChatOwner, (req, res) => {
   chat.deleteChat(req.body.chatId).then(() => {
     res.status(200).send({
       status: 200,
@@ -50,7 +51,7 @@ router.delete('/chats', (req, res) => {
   });
 });
 
-router.get('chats/:conversationId/messages', (req, res) => {
+router.get('chats/:conversationId/messages', auth.isAuth, isUser.isChatParticipant, (req, res) => {
   chat.getMessages(req.params.conversationId).then(messages => {
     res.status(200).send({
       status: 200,
