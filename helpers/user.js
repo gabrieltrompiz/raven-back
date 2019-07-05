@@ -75,3 +75,64 @@ module.exports.comparePassword = (candidate, hash) => {
     })
   })
 }
+
+module.exports.getStatusList = userId => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.many(properties.getStatusList, [userId]).then(statusList => {
+        res(statusList);
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+};
+
+module.exports.uploadStatus = (statusId, userId, statusDescription) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.uploadStatus, [statusId, userId, statusDescription]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+};
+
+module.exports.updateStatus = (oldStatusId, newStatusId) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.updateStatus, [oldStatusId, newStatusId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+};
+
+module.exports.deleteStatus = (statusId) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.deleteStatus, [statusId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+};
+
+/**
+ * TODO:
+ *  Check if db.none is ok for uploadStatus method and deleteStatus
+ */

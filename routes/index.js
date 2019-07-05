@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.use('/session', require('./auth'));
+router.use('/', require('./auth'));
+router.use('/', require('./chat'));
+router.use('/', require('./status'));
 
 router.get('/', (req, res) => {
   res.status(200).send({

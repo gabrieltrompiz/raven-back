@@ -26,9 +26,10 @@ module.exports = {
         'THEN DELETE FROM status WHERE status_id = $1; END IF; END $do$',
 
     //Conversation Queries
-    createConversation: 'INSERT INTO conversation (type_conversation_id, creator_id, conversation_name) VALUES ($1, $2, $3);',
-    insertUserToConversation: 'INSERT INTO conversation_users (user_id, type_user_id, conversation_id) VALUES ($1, $2, $3);',
+    createConversation: 'INSERT INTO conversation (type_conversation_id, creator_id, conversation_name) VALUES ($1, $2, $3) RETURNING *;',
+    insertUserToConversation: 'INSERT INTO conversation_users (user_id, type_user_id, conversation_id) VALUES ($1, $2, $3) RETURNING *;',
     removeUserFromConversation: 'DELETE FROM conversation_users WHERE conversation_user_id = $1;',
+    getConversationUsers: '',  /* TODO: this query lol*/
     getConversationList: 'SELECT cu.type_user_id, co.* FROM conversation_users cu INNER JOIN conversation co ' +
         'ON cu.conversation_id = co.conversation_id WHERE cu.user_id = $1;',
     searchConversation: 'SELECT cu.type_user_id, co.* FROM conversation_users cu INNER JOIN conversation co ' +
@@ -40,7 +41,7 @@ module.exports = {
         'DELETE FROM conversation WHERE conversation_id = $1;',
 
     //Message Queries
-    insertMessage: 'INSERT INTO message (user_id, conversation_id, message_attachment, message_body);',
+    insertMessage: 'INSERT INTO message (user_id, conversation_id, message_attachment, message_body) VALUES ($1, $2, $3, $4) RETURNING *;',
     getMessageList: 'SELECT message_id, user_id, message_attachment, message_body, message_creation_date FROM message WHERE conversation_id = $1;',
     searchMessages: 'SELECT message_id, user_id, message_attachment, message_body, message_creation_date ' +
         'FROM message WHERE conversation_id = $1 AND message_body ILIKE \'%\'$2\'%\';',
