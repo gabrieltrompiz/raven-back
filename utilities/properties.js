@@ -15,15 +15,14 @@ module.exports = {
     searchUser: 'SELECT * FROM users WHERE user_username ILIKE $1', //Search users with a given username using 'ILIKE'
 
     //Status Queries
-    initializeStatus: 'INSERT INTO status (user_id, status_description) VALUES (currval(\'users_user_id_seq\'), \'Available\');', //Query to be called when an user
-                                                                                                                                  //is created
+    initializeStatus: 'INSERT INTO status (user_id, status_description) VALUES ($1, \'Available\') RETURNING *;', //Query to be called when an user is created
     getStatusList: 'SELECT status_id, status_description, is_active FROM status WHERE user_id = $1;',
     getStatusById: 'SELECT * FROM status WHERE status_id = $1',
     uploadStatus: 'UPDATE status SET is_active = FALSE WHERE status_id = $1;' +
-        'INSERT INTO status (user_id, status_description) VALUES ($2, \'$3\') RETURNING *;',
+        'INSERT INTO status (user_id, status_description) VALUES ($2, $3) RETURNING *;',
     updateStatus: 'UPDATE status SET is_active = FALSE WHERE status_id = $1;' +
         'UPDATE status SET is_active = TRUE WHERE status_id = $2;',
-    deleteStatus: 'DO $do$ BEGIN IF EXISTS (SELECT * FROM status WHERE status_id = $1 AND is_active = FALSE);' +
+    deleteStatus: 'DO $do$ BEGIN IF EXISTS (SELECT * FROM status WHERE status_id = $1 AND is_active = FALSE)' +
         'THEN DELETE FROM status WHERE status_id = $1; END IF; END $do$',
 
     //Conversation Queries

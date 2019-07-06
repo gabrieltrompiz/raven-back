@@ -68,12 +68,48 @@ module.exports.isNotChatParticipant = (req, res, next) => {
 }
 
 module.exports.isStatusOwner = (req, res, next) => {
-  const statusId = typeof req.params.conversationId === 'undefined' ? 
-  typeof req.query.chatId === 'undefined' ? req.body.statusId : req.query.statusId : req.params.statusId;
-  
+  const statusId = typeof req.params.conversationId === 'undefined' ? typeof req.query.chatId === 'undefined' ? req.body.statusId : req.query.statusId : req.params.statusId;
+
+  console.log(statusId);
   user.getStatusById(statusId).then(status => {
     if(status.user_id === req.user.id) {
       next()
+    } else {
+      res.status(403).send({
+        status: 403,
+        message: 'Unauthorized'
+      });
+    }
+  }).catch(err => {
+    console.log(err);
+    res.status(500).send({
+      status: 500,
+      message: 'Internal Server Error'
+    });
+  });
+}
+
+module.exports.checkStatusChange = (req, res, next) => {
+  const oldsta = req.body.oldStatusId;
+  const newsta = req.body.newStatusId;
+  user.getStatusById(oldsta).then(status => {
+    if(status.user_id === req.user.id) {
+      user.getStatusById(newsta).then(sta => {
+        if(sta.user_id === req.user.id) {
+          next()
+        } else {
+          res.status(403).send({
+            status: 403,
+            message: 'Unauthorized'
+          });
+        }
+      }).catch(err => {
+        console.log(err);
+        res.status(500).send({
+          status: 500,
+          message: 'Internal Server Error'
+        });
+      });
     } else {
       res.status(403).send({
         status: 403,

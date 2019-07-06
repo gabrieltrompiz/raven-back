@@ -36,7 +36,8 @@ router.post('/status', auth.isAuth, (req, res) => {
   });
 });
 
-router.put('/status', auth.isAuth, isUser.isStatusOwner, (req, res) => {
+router.put('/status', auth.isAuth, isUser.checkStatusChange, (req, res) => {
+  console.log(req.body.oldStatusId + req.body.newStatusId);
   user.updateStatus(req.body.oldStatusId, req.body.newStatusId).then(() => {
     res.status(200).send({
       status: 200,

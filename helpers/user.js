@@ -6,8 +6,6 @@ module.exports.getUserByEmail = email => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
       obj.oneOrNone(properties.getUserByEmail, [email]).then(user => {
-        console.log(email)
-        console.log("user" + user)
         res(user);
         obj.done();
       }).catch(err => {
@@ -36,13 +34,21 @@ module.exports.getUserByUsername = username => {
   });
 }
 
-module.exports.register = user => {
+module.exports.register = userData => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.one(properties.registerUser, [user.username, user.name, user.email, '../assets/default.jpg', user.password]).then(user => {
-        res(user);
-        obj.done();
+      obj.task(async t => {
+        const user = await t.one(properties.registerUser, 
+          [userData.username, userData.name, userData.email, userData.pictureUrl === undefined ? '../assets/default.jpg': userData.pictureUrl, userData.password]);
+        const status = await t.one(properties.initializeStatus, [user.user_id]);
+        return {user: user, status: status}
+      }).then(data => {
+        res(data);
+      }).catch(err => {
+        console.log(err);
+        rej(err);
       });
+      obj.done();
     }).catch(err => {
       console.log(err);
       rej(err);
@@ -51,20 +57,6 @@ module.exports.register = user => {
     console.log(err);
     rej(err);
   })
-};
-
-module.exports.login = (email, password) => {
-  return new Promise((res, rej) => {
-    db.connect().then(obj => {
-      obj.oneOrNone(properties.login, [email, password]).then(user => {
-        res(user);
-        obj.done();
-      });
-    }).catch(err => {
-      console.log(err);
-      rej(err);
-    });
-  });
 };
 
 module.exports.comparePassword = (candidate, hash) => {
@@ -79,7 +71,7 @@ module.exports.comparePassword = (candidate, hash) => {
 module.exports.getStatusList = userId => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.many(properties.getStatusList, [userId]).then(statusList => {
+      obj.manyOrNone(properties.getStatusList, [userId]).then(statusList => {
         res(statusList);
         obj.done();
       });
@@ -93,7 +85,7 @@ module.exports.getStatusList = userId => {
 module.exports.getStatusById = statusId => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.many(properties.getStatusById, [statusId]).then(status => {
+      obj.one(properties.getStatusById, [statusId]).then(status => {
         res(status);
         obj.done();
       });

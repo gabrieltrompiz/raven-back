@@ -1,5 +1,5 @@
 const express = require('express');
-const auth = require('isAuth');
+const auth = require('../middlewares/isAuth');
 const chat = require('../helpers/chat');
 const isUser = require('../middlewares/isUser')
 const router = express.Router();
@@ -21,11 +21,11 @@ router.get('/chats', auth.isAuth, (req, res) => {
 });
 
 router.post('/chats', auth.isAuth, (req, res) => {
-  chat.createChat(req.body.typeChat, req.user.id, req.body.chatName).then(chat => {
+  chat.createChat(req.body.typeChat, req.user.id, req.body.chatName, req.body.participants).then(chat => {
     res.status(200).send({
       status: 200,
       message: 'Chat created succesfully',
-      chat: chat
+      data: chat
     })
   }).catch(err => {
     console.log(err);

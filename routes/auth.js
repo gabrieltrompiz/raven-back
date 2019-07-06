@@ -50,30 +50,39 @@ router.post('/register', auth.isLogged, auth.emailRegistered, (req, res) => {
   if(!user.token) { user.token = "" }
   if(!codeManager.checkToken(user.email, user.token)) {
     res.status(401).send({ status: 401, message: 'Invalid register token for given email' })
+  } else {
+    const salt = bcrypt.genSaltSync(10);
+    user.password = bcrypt.hashSync(user.password, salt);
+    
+    userHelper.register(user).then(data => {
+      res.status(200).send({
+        status: 200,
+        message: 'User registered succesfully',
+        data: {
+          user: {
+            id: data.user.user_id,
+            username: data.user.user_username,
+            name: data.user.user_name,
+            email: data.user.user_email,
+            pictureUrl: data.user.user_picture_url,
+            creationTime: data.user.user_creation_time
+          },
+          status: {
+            statusId: data.status.status_id,
+            userId: data.status.user_id,
+            description: data.status.status_description,
+            isActive: data.status.is_active,
+          }
+        }
+      });
+    }).catch(err => {
+      console.log(err);
+      res.status(500).send({
+        status: 500,
+        message: 'Internal server error'
+      });
+    });
   }
-  const salt = bcrypt.genSaltSync(10);
-  user.password = bcrypt.hashSync(user.password, salt);
-  
-  userHelper.register(user).then(data => {
-    req.login(data, err => {});
-    res.status(200).send({
-      status: 200,
-      message: 'User registered succesfully',
-      data: {
-        id: data.user_id,
-        username: user_username,
-        name: data.user_name,
-        email: data.user_email,
-        pictureUrl: data.user_picture_url,
-        creationTime: data.user_creation_time
-      }
-    });
-  }).catch(err => {
-    res.status(500).send({
-      status: 500,
-      message: 'Internal server error'
-    });
-  })
 });
 
 router.post('/sendCode', auth.emailRegistered,  (req, res) => {
@@ -93,7 +102,6 @@ router.post('/sendCode', auth.emailRegistered,  (req, res) => {
       data: data
     });
   }).catch(err => {
-    console.log(err);
     res.status(500).send({
       status: 500,
       message: 'Couldn\'t send Mail'
@@ -106,7 +114,6 @@ router.get('/checkCode', async (req, res) => {
   const email = req.query.email;
   if(codeManager.accept(email, code)) {
     const token = await codeManager.generateToken(email)
-    console.log(token)
     res.status(200).send({
       status: 200,
       message: 'Code Matched',

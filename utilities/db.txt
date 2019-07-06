@@ -57,7 +57,7 @@ CREATE TABLE public.conversation (
                 type_conversation_id INTEGER NOT NULL,
                 creator_id INTEGER NOT NULL,
                 conversation_name VARCHAR(35),
-                conversation_creation_date TIMESTAMP NOT NULL,
+                conversation_creation_date TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT conversation_pk PRIMARY KEY (conversation_id)
 );
 

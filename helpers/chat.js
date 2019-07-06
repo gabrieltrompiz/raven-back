@@ -1,4 +1,5 @@
 const properties = require('../utilities/properties');
+const db = require('../utilities/db');
 
 module.exports.getChats = userId => {
   return new Promise((res, rej) => {
@@ -42,13 +43,25 @@ module.exports.isUserParticipant = (userId, chatId) => {
   });
 }
 
-module.exports.createChat = (typeChat, creatorId, chatName) => {
+module.exports.createChat = (typeChat, creatorId, chatName, participants) => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.one(properties.createConversation, [typeChat, creatorId, chatName]).then(chat => {
-        res(chat);
+      obj.task(async t => {
+        const chat = await t.one(properties.createConversation, [typeChat, creatorId, chatName]);        
+        let users = [];
+        users.push(await t.one(properties.insertUserToConversation, [creatorId, 2, chat.conversation_id]));
+        
+        for (const user in participants) {
+          users.push(await t.one(properties.insertUserToConversation, [participants[user], 1, chat.conversation_id]));
+        }
+        return {chat: chat, users: users};
+      }).then(data => {
+        res(data);
+      }).catch(err => {
+        console.log(err);
+        rej(err);
+      })
         obj.done();
-      });
     }).catch(err => {
       console.log(err);
       rej(err);
