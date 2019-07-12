@@ -138,6 +138,20 @@ module.exports.deleteStatus = (statusId) => {
   });
 };
 
+module.exports.searchUsers = query => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.manyOrNone(properties.getUsersByUsername, ['%' + query + '%']).then(users => {
+        res(users);
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
 /**
  * TODO:
  *  Check if db.none is ok for uploadStatus method and deleteStatus

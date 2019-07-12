@@ -8,6 +8,7 @@ module.exports = {
     getUserById: 'SELECT user_id, user_name, user_email, user_picture_url FROM users WHERE user_id = $1;',
     getUserByEmail: 'SELECT * FROM users WHERE user_email = $1;',
     getUserByUsername: 'SELECT * FROM users WHERE user_username ILIKE $1',
+    getUsersByUsername: 'SELECT user_id, user_name, user_email, user_picture_url FROM users WHERE user_username ILIKE $1',
     updateUser: 'UPDATE users SET user_name = $1, user_username = $2 WHERE user_id = $3;',
     updatePassword: 'UPDATE users SET user_password = $1 WHERE user_id = $2;',
     updatePicture: 'UPDATE users SET user_picture_url = $1 WHERE user_id = $2;',
@@ -28,7 +29,7 @@ module.exports = {
     //Conversation Queries
     createConversation: 'INSERT INTO conversation (type_conversation_id, creator_id, conversation_name) VALUES ($1, $2, $3) RETURNING *;',
     insertUserToConversation: 'INSERT INTO conversation_users (user_id, type_user_id, conversation_id) VALUES ($1, $2, $3) RETURNING *;',
-    removeUserFromConversation: 'DELETE FROM conversation_users WHERE conversation_user_id = $1;',
+    removeUserFromConversation: 'DELETE FROM conversation_users WHERE user_id = $1 AND conversation_id = $2;',
     getConversationUsers: 'SELECT * FROM conversation_users WHERE conversation_id = $1',
     getConversationList: 'SELECT cu.type_user_id, co.* FROM conversation_users cu INNER JOIN conversation co ' +
         'ON cu.conversation_id = co.conversation_id WHERE cu.user_id = $1;',

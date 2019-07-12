@@ -4,6 +4,7 @@ const router = express.Router();
 router.use('/', require('./auth'));
 router.use('/', require('./chat'));
 router.use('/', require('./status'));
+router.use('/', require('./user'))
 
 router.get('/', (req, res) => {
   res.status(200).send({

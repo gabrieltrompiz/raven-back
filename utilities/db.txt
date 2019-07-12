@@ -85,7 +85,7 @@ CREATE TABLE public.message (
                 conversation_id INTEGER NOT NULL,
                 message_attachment VARCHAR,
                 message_body VARCHAR,
-                message_creation_date TIMESTAMP NOT NULL,
+                message_creation_date TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT message_id PRIMARY KEY (message_id)
 );
 

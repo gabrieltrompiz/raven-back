@@ -51,7 +51,7 @@ router.delete('/chats', auth.isAuth, isUser.isChatOwner, (req, res) => {
   });
 });
 
-router.get('chats/:conversationId/messages', auth.isAuth, isUser.isChatParticipant, (req, res) => {
+router.get('/chats/:conversationId/messages', auth.isAuth, isUser.isChatParticipant, (req, res) => {
   chat.getMessages(req.params.conversationId).then(messages => {
     res.status(200).send({
       status: 200,

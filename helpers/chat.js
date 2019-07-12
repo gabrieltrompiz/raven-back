@@ -29,10 +29,24 @@ module.exports.getChatById = chatId => {
   });
 }
 
+module.exports.getConversationUsers = chatId => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.many(properties.getConversationUsers, [chatId]).then(users => {
+        res(users);
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
 module.exports.isUserParticipant = (userId, chatId) => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.one(properties.getUserFromConversation, [userId, chatId]).then(user => {
+      obj.oneOrNone(properties.getUserFromConversation, [chatId, userId]).then(user => {
         res(user);
         obj.done();
       });
@@ -125,10 +139,10 @@ module.exports.joinGroup = (userId, typeUserId, chatId) => {
   });
 };
 
-module.exports.leaveGroup = (userId) => {
+module.exports.leaveGroup = (userId, chatId) => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.none(properties.removeUserFromConversation, [userId]).then(() => {
+      obj.none(properties.removeUserFromConversation, [userId, chatId]).then(() => {
         res();
         obj.done();
       });
@@ -142,8 +156,8 @@ module.exports.leaveGroup = (userId) => {
 module.exports.getMessages = chatId => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.manyOrNone(properties.getMessageList, [chatId]).then(() => {
-        res();
+      obj.manyOrNone(properties.getMessageList, [chatId]).then((data) => {
+        res(data);
         obj.done();
       });
     }).catch(err => {
