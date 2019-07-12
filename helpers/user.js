@@ -39,7 +39,7 @@ module.exports.register = userData => {
     db.connect().then(obj => {
       obj.task(async t => {
         const user = await t.one(properties.registerUser, 
-          [userData.username, userData.name, userData.email, userData.pictureUrl === undefined ? '../assets/default.jpg': userData.pictureUrl, userData.password]);
+          [userData.username, userData.name, userData.email, userData.pictureUrl === undefined ? '../assets/default.png': userData.pictureUrl, userData.password]);
         const status = await t.one(properties.initializeStatus, [user.user_id]);
         return {user: user, status: status}
       }).then(data => {

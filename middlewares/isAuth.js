@@ -25,7 +25,7 @@ module.exports.isLogged = (req, res, next) => {
 
 //Verifies that the sent email is not registered in db
 module.exports.emailRegistered = (req, res, next) => {
-  const email = req.query.email;
+  const email = typeof req.query.email === 'undefined' ? req.body.email : req.query.email;
   user.getUserByEmail(email).then(user => {
     if(user === null)
       next();
@@ -38,13 +38,13 @@ module.exports.emailRegistered = (req, res, next) => {
   }).catch(err => {
     res.status(500).send({
       status: 500,
-      message: 'Internal server error'
+      message: err
     });
   });
 };
 
 module.exports.usernameRegistered = (req, res, next) => {
-  const username = req.query.username;
+  const username = typeof req.query.username === 'undefined' ? req.body.username : req.query.username;
   
   user.getUserByUsername(username).then(user => {
     if(user === null) {

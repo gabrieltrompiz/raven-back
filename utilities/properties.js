@@ -7,7 +7,7 @@ module.exports = {
     login: 'SELECT * FROM users WHERE user_email = $1 AND user_password = $2',
     getUserById: 'SELECT user_id, user_name, user_email, user_picture_url FROM users WHERE user_id = $1;',
     getUserByEmail: 'SELECT * FROM users WHERE user_email = $1;',
-    getUserByUsername: 'SELECT * FROM users WHERE user_username = $1',
+    getUserByUsername: 'SELECT * FROM users WHERE user_username ILIKE $1',
     updateUser: 'UPDATE users SET user_name = $1, user_username = $2 WHERE user_id = $3;',
     updatePassword: 'UPDATE users SET user_password = $1 WHERE user_id = $2;',
     updatePicture: 'UPDATE users SET user_picture_url = $1 WHERE user_id = $2;',

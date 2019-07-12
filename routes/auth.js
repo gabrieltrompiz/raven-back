@@ -8,6 +8,15 @@ const bcrypt = require('bcryptjs');
 const codeManager = require('../helpers/codeManager');
 const properties = require('../utilities/properties');
 
+const diskStorage = require('../utilities/diskStorage');
+const fileFilter = require('../middlewares/fileFilter');
+const config = require('../config.json');
+
+const multer = require('multer');
+const upload = multer({ storage: diskStorage, fileFilter: fileFilter });
+// const upload = multer({ dest: '../assets/avatars/'})
+const fs = require('fs');
+
 const transporter = require('nodemailer').createTransport({
   host: 'smtp.gmail.com',
   port: 587,
@@ -45,7 +54,7 @@ router.get('/logout', auth.isAuth, (req, res) => {
   res.status(200).send({ status: 200, message: "Logged out successfully" });
 });
 
-router.post('/register', auth.isLogged, auth.emailRegistered, (req, res) => {
+router.post('/register', upload.single('avatar'), auth.isLogged, auth.emailRegistered, auth.usernameRegistered, (req, res) => {
   const user = req.body;
   if(!user.token) { user.token = "" }
   if(!codeManager.checkToken(user.email, user.token)) {
@@ -75,7 +84,10 @@ router.post('/register', auth.isLogged, auth.emailRegistered, (req, res) => {
           }
         }
       });
+      
     }).catch(err => {
+      fs.unlink(config.storage_dir + '/avatar/' + req.body.id + '.png', er => console.log(er));
+
       console.log(err);
       res.status(500).send({
         status: 500,
