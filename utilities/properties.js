@@ -38,13 +38,14 @@ module.exports = {
     searchConversation: 'SELECT cu.type_user_id, co.* FROM conversation_users cu INNER JOIN conversation co ' +
         'ON cu.conversation_id = co.conversation_id WHERE cu.user_id = $1 AND co.conversation_name ILIKE $2;',
     updateConversationName: 'UPDATE conversation SET conversation_name = $1 WHERE conversation_id = $2;',
-    updateTypeUser: 'UPDATE conversation_users SET type_user_id = $1 WHERE conversation_user_id = $2;',
+    updateTypeUser: 'UPDATE conversation_users SET type_user_id = $1 WHERE user_id = $2 AND conversation_id = $3;',
     deleteConversation: 'DELETE FROM conversation_users WHERE conversation_id = $1;' +
         'DELETE FROM message WHERE conversation_id = $1;' +
         'DELETE FROM conversation WHERE conversation_id = $1;',
 
     //Message Queries
     insertMessage: 'INSERT INTO message (user_id, conversation_id, message_attachment, message_body) VALUES ($1, $2, $3, $4) RETURNING *;',
+    getMessageById: 'SELECT * FROM message WHERE message_id = $1',
     getMessageList: 'SELECT message_id, user_id, message_attachment, message_body, message_creation_date FROM message WHERE conversation_id = $1;',
     searchMessages: 'SELECT message_id, user_id, message_attachment, message_body, message_creation_date ' +
         'FROM message WHERE conversation_id = $1 AND message_body ILIKE \'%\'$2\'%\';',

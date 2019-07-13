@@ -224,6 +224,20 @@ module.exports.unblockUser = (blockerId, blockedId) => {
   });
 };
 
+module.exports.changePermissions = (userId, chatId, permission) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.updateTypeUser, [permission, userId, chatId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
 /**
  * TODO: 
  *  Search messages
