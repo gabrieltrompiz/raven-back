@@ -32,7 +32,7 @@ module.exports.getChatById = chatId => {
 module.exports.getConversationUsers = chatId => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.many(properties.getConversationUsers, [chatId]).then(users => {
+      obj.manyOrNone(properties.getConversationUsers, [chatId]).then(users => {
         res(users);
         obj.done();
       });
@@ -125,7 +125,7 @@ module.exports.deleteMessage = (messageId) => {
   });
 };
 
-module.exports.joinGroup = (userId, typeUserId, chatId) => {
+module.exports.join = (userId, typeUserId, chatId) => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
       obj.one(properties.insertUserToConversation, [userId, typeUserId, chatId]).then(user => {
