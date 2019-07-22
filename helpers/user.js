@@ -152,6 +152,20 @@ module.exports.searchUsers = query => {
   });
 }
 
+module.exports.updateProfile = (name, username, userId) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.updateUser, [name, username, userId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  });
+}
+
 /**
  * TODO:
  *  Check if db.none is ok for uploadStatus method and deleteStatus

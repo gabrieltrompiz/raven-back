@@ -1,7 +1,8 @@
 const props = require('./utilities/properties');
 
 const express = require('express');
-const app = express()
+const app = express();
+const siofu = require('socketio-file-upload');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
@@ -10,6 +11,7 @@ let passport = require('passport');
 let cors = require('cors');
 
 require('./sockets/chat')(io);
+require('./sockets/profile')(io);
 
 app.use(express.json());
 app.use(express.urlencoded());
@@ -18,6 +20,8 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
+
+app.use(siofu.router);
 
 app.use(cors({
 	origin: '*',
