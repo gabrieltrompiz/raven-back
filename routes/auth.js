@@ -67,21 +67,13 @@ router.post('/register', upload.single('avatar'), auth.isLogged, auth.emailRegis
       res.status(200).send({
         status: 200,
         message: 'User registered succesfully',
-        data: {
-          user: {
-            id: data.user.user_id,
-            username: data.user.user_username,
-            name: data.user.user_name,
-            email: data.user.user_email,
-            pictureUrl: data.user.user_picture_url,
-            creationTime: data.user.user_creation_time
-          },
-          status: {
-            statusId: data.status.status_id,
-            userId: data.status.user_id,
-            description: data.status.status_description,
-            isActive: data.status.is_active,
-          }
+        user: {
+          id: user.user_id,
+          username: user.user_username,
+          name: user.user_name,
+          email:user.user_email,
+          pictureUrl: user.user_picture_url,
+          creationTime: user.user_creation_time
         }
       });
       

@@ -40,8 +40,7 @@ module.exports.register = userData => {
       obj.task(async t => {
         const user = await t.one(properties.registerUser, 
           [userData.username, userData.name, userData.email, userData.pictureUrl === undefined ? '../assets/default.png': userData.pictureUrl, userData.password]);
-        const status = await t.one(properties.initializeStatus, [user.user_id]);
-        return {user: user, status: status}
+        return user;
       }).then(data => {
         res(data);
       }).catch(err => {
@@ -67,76 +66,6 @@ module.exports.comparePassword = (candidate, hash) => {
     })
   })
 }
-
-module.exports.getStatusList = userId => {
-  return new Promise((res, rej) => {
-    db.connect().then(obj => {
-      obj.manyOrNone(properties.getStatusList, [userId]).then(statusList => {
-        res(statusList);
-        obj.done();
-      });
-    }).catch(err => {
-      console.log(err);
-      rej(err);
-    });
-  });
-};
-
-module.exports.getStatusById = statusId => {
-  return new Promise((res, rej) => {
-    db.connect().then(obj => {
-      obj.one(properties.getStatusById, [statusId]).then(status => {
-        res(status);
-        obj.done();
-      });
-    }).catch(err => {
-      console.log(err);
-      rej(err);
-    });
-  });
-}
-
-module.exports.uploadStatus = (oldStatusId, userId, statusDescription) => {    //CHECK IF THIS QUERY WORKS
-  return new Promise((res, rej) => {
-    db.connect().then(obj => {
-      obj.one(properties.uploadStatus, [oldStatusId, userId, statusDescription]).then(status => {
-        res(status);
-        obj.done();
-      });
-    }).catch(err => {
-      console.log(err);
-      rej(err);
-    });
-  });
-};
-
-module.exports.updateStatus = (oldStatusId, newStatusId) => {
-  return new Promise((res, rej) => {
-    db.connect().then(obj => {
-      obj.none(properties.updateStatus, [oldStatusId, newStatusId]).then(() => {
-        res();
-        obj.done();
-      });
-    }).catch(err => {
-      console.log(err);
-      rej(err);
-    });
-  });
-};
-
-module.exports.deleteStatus = (statusId) => {
-  return new Promise((res, rej) => {
-    db.connect().then(obj => {
-      obj.none(properties.deleteStatus, [statusId]).then(() => {
-        res();
-        obj.done();
-      });
-    }).catch(err => {
-      console.log(err);
-      rej(err);
-    });
-  });
-};
 
 module.exports.searchUsers = query => {
   return new Promise((res, rej) => {
@@ -166,7 +95,16 @@ module.exports.updateProfile = (name, username, userId) => {
   });
 }
 
-/**
- * TODO:
- *  Check if db.none is ok for uploadStatus method and deleteStatus
- */
+module.exports.changeStatus = (userId, status) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.changeUserStatus, [status, userId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  })
+}
