@@ -19,6 +19,7 @@ module.exports.isLogged = (req, res, next) => {
       response: 'Already logged in.'
     });
   } else {
+    req.body.cookie = req.headers.cookie
     next();
   }
 };

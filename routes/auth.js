@@ -93,24 +93,28 @@ router.post('/sendCode', auth.emailRegistered,  (req, res) => {
   const email = req.body.email;
   const name = req.body.name;
   const code = codeManager.generateCode(email);
-  transporter.sendMail({
-    from: properties.emailUser,
-    to: email,
-    subject: 'Verify your email account',
-    text: 'Hello, ' + name + ', here\'s your verification code: ' + code,
-    html: '<p><h1>Hello, ' + name + '. </h1><h4>Here\'s your verification code: <b>' + code +'</b></h4></p>'
-  }).then(data => {
-    res.status(200).send({
-      status: 200,
-      message: 'Mail Sended',
-      data: data
-    });
-  }).catch(err => {
-    res.status(500).send({
-      status: 500,
-      message: 'Couldn\'t send Mail'
-    });
+  console.log(email + ": " + code)
+  res.status(200).send({
+    status: 200
   })
+  // transporter.sendMail({
+  //   from: properties.emailUser,
+  //   to: email,
+  //   subject: 'Verify your email account',
+  //   text: 'Hello, ' + name + ', here\'s your verification code: ' + code,
+  //   html: '<p><h1>Hello, ' + name + '. </h1><h4>Here\'s your verification code: <b>' + code +'</b></h4></p>'
+  // }).then(data => {
+  //   res.status(200).send({
+  //     status: 200,
+  //     message: 'Mail Sended',
+  //     data: data
+  //   });
+  // }).catch(err => {
+  //   res.status(500).send({
+  //     status: 500,
+  //     message: 'Couldn\'t send Mail'
+  //   });
+  // })
 })
 
 router.get('/checkCode', async (req, res) => {

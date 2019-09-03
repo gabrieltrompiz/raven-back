@@ -10,24 +10,27 @@ let session = require('express-session');
 let passport = require('passport');
 let cors = require('cors');
 
-require('./sockets/chat')(io);
+const sessionMiddleware = session({
+	secret:'keyboard cat',
+	resave: true,
+	saveUninitialized: true
+})
+
+
+require('./sockets/chat')(io, sessionMiddleware);
 require('./sockets/profile')(io);
 
 app.use(express.json());
 app.use(express.urlencoded());
-app.use(session({
-	secret:'keyboard cat',
-	resave: false,
-	saveUninitialized: false
-}));
+app.use(sessionMiddleware);
 
 app.use(siofu.router);
 
 app.use(cors({
-	origin: '*',
-	methods: 'POST, PUT, GET, DELETE, OPTIONS',
-	allowedHeaders: 'Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization',
-	credentials: true
+  origin: true,
+  methods: 'POST, PUT, GET, DELETE, OPTIONS',
+  allowedHeaders: 'Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization',
+  credentials: true
 }))
 
 app.use(passport.initialize());
