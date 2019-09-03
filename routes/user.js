@@ -3,6 +3,15 @@ const router = express.Router();
 const auth = require('../middlewares/isAuth');
 const userHelper = require('../helpers/user');
 
+const diskStorage = require('../utilities/diskStorage');
+const fileFilter = require('../middlewares/fileFilter');
+const config = require('../config.json');
+
+const multer = require('multer');
+const upload = multer({ storage: diskStorage, fileFilter: fileFilter });
+// const upload = multer({ dest: '../assets/avatars/'})
+const fs = require('fs');
+
 router.get('/users', auth.isAuth, (req, res) => {
   const query = req.query.search;
   if(typeof query === 'undefined') {
@@ -32,8 +41,11 @@ router.get('/users', auth.isAuth, (req, res) => {
   }
 });
 
-router.put('/users', auth.isAuth, (req, res) => {
-  
+router.post('/picture', upload.single('avatar'), auth.isAuth, (req, res) => {
+  res.status(200).send({
+    status: 200,
+    message: 'Image Uploaded'
+  })
 })
 
 module.exports = router;

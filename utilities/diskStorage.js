@@ -6,6 +6,6 @@ module.exports = multer.diskStorage({
     cb(null, config.storage_dir + '/avatars/');
   },
   filename: (req, file, cb) =>  {
-    cb(null, req.body.email + '.png');
+    cb(null, req.user ? req.user.email + '.png' : req.body.email + '.png');
   }
 });
