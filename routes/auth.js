@@ -68,12 +68,12 @@ router.post('/register', upload.single('avatar'), auth.isLogged, auth.emailRegis
         status: 200,
         message: 'User registered succesfully',
         user: {
-          id: user.user_id,
-          username: user.user_username,
-          name: user.user_name,
-          email:user.user_email,
-          pictureUrl: user.user_picture_url,
-          creationTime: user.user_creation_time
+          id: data.user_id,
+          username: data.user_username,
+          name: data.user_name,
+          email:data.user_email,
+          pictureUrl: data.user_picture_url,
+          creationTime: data.user_creation_time
         }
       });
       
