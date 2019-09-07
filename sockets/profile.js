@@ -42,7 +42,8 @@ module.exports = (io) => {
       userHelper.searchUsers(query).then(users => {
         let beautifulUsers = [];
         users.forEach(user => {
-          beautifulUsers.push({ id: user.user_id, name: user.user_name, email: user.user_email, pictureUrl: user.user_picture_url });
+          beautifulUsers.push({ id: user.user_id, name: user.user_name, email: user.user_email, 
+            pictureUrl: user.user_picture_url, status: user.user_status, username: user.user_username });
         });
         socket.emit('search', users);
       }).catch(err => socket.emit('error'));

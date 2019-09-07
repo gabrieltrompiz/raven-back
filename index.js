@@ -6,6 +6,10 @@ const siofu = require('socketio-file-upload');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
+const  bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+
 let session = require('express-session');
 let passport = require('passport');
 let cors = require('cors');

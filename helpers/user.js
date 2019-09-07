@@ -34,12 +34,12 @@ module.exports.getUserByUsername = username => {
   });
 }
 
-module.exports.register = userData => {
+module.exports.register = _user => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
       obj.task(async t => {
         const user = await t.one(properties.registerUser, 
-          [userData.username, userData.name, userData.email, userData.pictureUrl === undefined ? '../assets/default.png': userData.pictureUrl, userData.password]);
+          [_user.username, _user.name, _user.email, _user.pictureUrl, _user.password]);
         return user;
       }).then(data => {
         res(data);
@@ -54,7 +54,6 @@ module.exports.register = userData => {
     });
   }).catch(err => {
     console.log(err);
-    rej(err);
   })
 };
 
@@ -70,7 +69,7 @@ module.exports.comparePassword = (candidate, hash) => {
 module.exports.searchUsers = query => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
-      obj.manyOrNone(properties.getUsersByUsername, ['%' + query + '%']).then(users => {
+      obj.manyOrNone(properties.searchUser, ['%' + query + '%']).then(users => {
         res(users);
         obj.done();
       });
@@ -99,6 +98,20 @@ module.exports.changeStatus = (userId, status) => {
   return new Promise((res, rej) => {
     db.connect().then(obj => {
       obj.none(properties.changeUserStatus, [status, userId]).then(() => {
+        res();
+        obj.done();
+      });
+    }).catch(err => {
+      console.log(err);
+      rej(err);
+    });
+  })
+}
+
+module.exports.changePictureUrl = (userId, pictureUrl) => {
+  return new Promise((res, rej) => {
+    db.connect().then(obj => {
+      obj.none(properties.updatePicture, [pictureUrl, userId]).then(() => {
         res();
         obj.done();
       });

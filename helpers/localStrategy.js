@@ -15,7 +15,8 @@ module.exports = new LocalStrategy( {usernameField: 'email', passwordField: 'pas
           name: user.user_name,
           typeId: user.type_id,
           creationTime: new Date(user.user_creation_time).getTime(),
-          email: user.user_email
+          email: user.user_email,
+          pictureUrl: user.user_picture_url
         });
       }
       else {

@@ -2,13 +2,10 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/isAuth');
 const userHelper = require('../helpers/user');
+const path = require('path')
 
-const diskStorage = require('../utilities/diskStorage');
-const fileFilter = require('../middlewares/fileFilter');
 const config = require('../config.json');
 
-const multer = require('multer');
-const upload = multer({ storage: diskStorage, fileFilter: fileFilter });
 // const upload = multer({ dest: '../assets/avatars/'})
 const fs = require('fs');
 
@@ -41,11 +38,37 @@ router.get('/users', auth.isAuth, (req, res) => {
   }
 });
 
-router.post('/picture', upload.single('avatar'), auth.isAuth, (req, res) => {
-  res.status(200).send({
-    status: 200,
-    message: 'Image Uploaded'
-  })
+router.post('/picture', (req, res) => {
+  const uri = req.body.uri;
+  // console.log(req.body);
+  if(req.body.oldUri !== '') {
+    fs.unlink(config.storage_dir + 'avatars/' + req.body.oldUri + '.png', err => {
+      if(err) console.log(err);
+      userHelper.changePictureUrl(req.user.id, uri);
+    })
+  }
+  console.log(uri);
+  fs.writeFile(config.storage_dir + 'avatars/' + uri + '.png', req.body.base64, 'base64', err => {
+    if(err) {
+      console.log(err);
+      res.status(500).send({
+        status: 500,
+        message: 'Could not Upload Image'
+      })
+    } else {
+      res.status(200).send({
+        status: 200,
+        message: 'Image Uploaded'
+      })
+    }
+  });
+})
+
+router.get('/picture/:uri', (req, res) => {
+  let uri = req.params.uri;
+  console.log('here')
+  res.setHeader("Content-Type", "image/png");
+  fs.createReadStream('assets/avatars/' + uri + '.png').pipe(res)
 })
 
 module.exports = router;
