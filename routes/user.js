@@ -42,13 +42,13 @@ router.post('/picture', (req, res) => {
   const uri = req.body.uri;
   // console.log(req.body);
   if(req.body.oldUri !== '') {
-    fs.unlink(config.storage_dir + 'avatars/' + req.body.oldUri + '.png', err => {
+    fs.unlink(config.storage_dir + 'avatars/' + req.body.oldUri, err => {
       if(err) console.log(err);
       userHelper.changePictureUrl(req.user.id, uri);
     })
   }
   console.log(uri);
-  fs.writeFile(config.storage_dir + 'avatars/' + uri + '.png', req.body.base64, 'base64', err => {
+  fs.writeFile(config.storage_dir + 'avatars/' + uri, req.body.base64, 'base64', err => {
     if(err) {
       console.log(err);
       res.status(500).send({
@@ -68,7 +68,7 @@ router.get('/picture/:uri', (req, res) => {
   let uri = req.params.uri;
   console.log('here')
   res.setHeader("Content-Type", "image/png");
-  fs.createReadStream('assets/avatars/' + uri + '.png').pipe(res)
+  fs.createReadStream('assets/avatars/' + uri).pipe(res)
 })
 
 module.exports = router;

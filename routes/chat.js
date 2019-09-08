@@ -3,6 +3,8 @@ const auth = require('../middlewares/isAuth');
 const chat = require('../helpers/chat');
 const isUser = require('../middlewares/isUser')
 const router = express.Router();
+const fs = require('fs');
+const config = require('../config.json');
 
 router.get('/chats', auth.isAuth, (req, res) => {
   chat.getChats(req.user.id).then(chats => {
@@ -66,5 +68,34 @@ router.get('/chats/:conversationId/messages', auth.isAuth, isUser.isChatParticip
     });
   });
 });
+
+router.post('/upload', auth.isAuth, (req, res) => {
+  //base64
+  //filename
+  fs.writeFile(config.storage_dir + 'conversations/' +  req.body.filename, req.body.base64, 'base64', err => {
+    if(err) {
+      console.log(err);
+      res.status(500).send({
+        status: 500,
+        message: 'Could not Upload Image'
+      })
+    } else {
+      res.status(200).send({
+        status: 200,
+        message: 'Image Uploaded',
+        data: {
+          filePath:  req.body.filename
+        }
+      })
+    }
+  });
+})
+
+router.get('/upload/:uri', auth.isAuth, (req, res) => {
+  let uri = req.params.uri;
+  console.log('here')
+  res.setHeader("Content-Type", "image/png");
+  fs.createReadStream('assets/conversation/' + uri).pipe(res);
+})
 
 module.exports = router;
