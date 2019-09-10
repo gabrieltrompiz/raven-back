@@ -42,13 +42,13 @@ router.post('/picture', (req, res) => {
   const uri = req.body.uri;
   // console.log(req.body);
   if(req.body.oldUri !== '') {
-    fs.unlink(config.storage_dir + 'avatars/' + req.body.oldUri, err => {
+    fs.unlink(config.storage_dir + '/avatars/' + req.body.oldUri, err => {
       if(err) console.log(err);
       userHelper.changePictureUrl(req.user.id, uri);
     })
   }
   console.log(uri);
-  fs.writeFile(config.storage_dir + 'avatars/' + uri, req.body.base64, 'base64', err => {
+  fs.writeFile(config.storage_dir + '/avatars/' + uri, req.body.base64, 'base64', err => {
     if(err) {
       console.log(err);
       res.status(500).send({
